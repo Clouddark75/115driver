@@ -84,11 +84,16 @@ func (c *Pan115Client) importCookies(cookies map[string]string, domain string, p
 }
 
 type Credential struct {
-	UID  string `json:"UID"`
-	CID  string `json:"CID"`
-	SEID string `json:"SEID"`
-	KID  string `json:"KID"`
+    // NEW: store the whole header
+    RawCookie string `json:"cookie,omitempty"`
+
+    // old fields kept for backward compatibility
+    UID  string `json:"UID,omitempty"`
+    CID  string `json:"CID,omitempty"`
+    SEID string `json:"SEID,omitempty"`
+    KID  string `json:"KID,omitempty"`
 }
+
 
 // FromCookie get uid, cid, seid from cookie string
 func (cr *Credential) FromCookie(cookie string) error {
