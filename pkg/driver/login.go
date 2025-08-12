@@ -40,15 +40,27 @@ func (c *Pan115Client) LoginCheck() error {
 
 // ImportCredential import uid, cid, seid
 func (c *Pan115Client) ImportCredential(cr *Credential) *Pan115Client {
-	cookies := map[string]string{
-		CookieNameUid:  cr.UID,
-		CookieNameCid:  cr.CID,
-		CookieNameSeid: cr.SEID,
-		CookieNameKid:  cr.KID,
-	}
-	c.ImportCookies(cookies, CookieDomain115)
-	return c
+    if cr.RawCookie != "" {
+        // NEW path: feed the entire cookie header
+        hdr := http.Header{}
+        hdr.Add("Cookie", cr.RawCookie)
+        u, _ := url.Parse(CookieUrl)
+        c.SetCookies(c.Client.GetClient().Jar.Cookies(u)...) // clear old
+        c.SetCookies((&http.Request{Header: hdr}).Cookies()...)
+        return c
+    }
+
+    // legacy path (unchanged)
+    cookies := map[string]string{
+        CookieNameUid:  cr.UID,
+        CookieNameCid:  cr.CID,
+        CookieNameSeid: cr.SEID,
+        CookieNameKid:  cr.KID,
+    }
+    c.ImportCookies(cookies, CookieDomain115)
+    return c
 }
+
 
 func (c *Pan115Client) ImportCookies(cookies map[string]string, domains ...string) {
 	for _, domain := range domains {
@@ -92,6 +104,10 @@ type Credential struct {
     CID  string `json:"CID,omitempty"`
     SEID string `json:"SEID,omitempty"`
     KID  string `json:"KID,omitempty"`
+}
+// FromRawCookie takes the complete Cookie header you copied from DevTools
+func (cr *Credential) FromRawCookie(cookie string) {
+    cr.RawCookie = cookie
 }
 
 
