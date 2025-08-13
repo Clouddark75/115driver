@@ -3,11 +3,13 @@ package driver
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	neturl "net/url"
 	"strings"
 
 	"github.com/pkg/errors"
 )
+
 
 // CookieCheck checks the cookie status and will not logout of other devices.
 func (c *Pan115Client) CookieCheck() error {
