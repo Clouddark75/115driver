@@ -3,7 +3,6 @@ package driver
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	neturl "net/url"
 	"strings"
 
