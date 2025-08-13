@@ -46,7 +46,7 @@ func (c *Pan115Client) ImportCredential(cr *Credential) *Pan115Client {
         // NEW path: feed the entire cookie header
         hdr := http.Header{}
         hdr.Add("Cookie", cr.RawCookie)
-        u, _ := url.Parse(CookieUrl)
+        u, _ := neturl.Parse(CookieUrl)
         c.SetCookies(c.Client.GetClient().Jar.Cookies(u)...) // clear old
         c.SetCookies((&http.Request{Header: hdr}).Cookies()...)
         return c
